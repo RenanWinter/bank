@@ -4,6 +4,8 @@ import (
 	"math/rand"
 	"strings"
 	"time"
+
+	"github.com/google/uuid"
 )
 
 var randomizer *rand.Rand
@@ -40,7 +42,7 @@ func DateTime(min, max *time.Time) time.Time {
 		min = new(time.Time)
 	}
 
-	if max == nil {	
+	if max == nil {
 		max = new(time.Time)
 		*max = time.Now()
 	}
@@ -60,4 +62,16 @@ func Decimal(min, max float64, places int) float64 {
 	}
 
 	return float64(int(value*precision)) / precision
+}
+
+func Bool() bool {
+	return randomizer.Intn(2) == 1
+}
+
+func Duration(min, max time.Duration) time.Duration {
+	return time.Duration(Int(int64(min), int64(max)))
+}
+
+func UUID() string {
+	return uuid.New().String()
 }

@@ -106,7 +106,7 @@ func (q *Queries) GetUserAccounts(ctx context.Context, ownerID int64) ([]Account
 		return nil, err
 	}
 	defer rows.Close()
-	var items []Account
+	items := []Account{}
 	for rows.Next() {
 		var i Account
 		if err := rows.Scan(

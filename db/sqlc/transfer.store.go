@@ -19,7 +19,7 @@ type TransferResult struct {
 	ToMovement   Movement `json:"to_movement"`
 }
 
-func (s *Store) Transfer(ctx context.Context, arg TransferParams) (TransferResult, error) {
+func (s *SQLStore) Transfer(ctx context.Context, arg TransferParams) (TransferResult, error) {
 	var result TransferResult
 
 	err := s.transaction(ctx, func(q *Queries) error {

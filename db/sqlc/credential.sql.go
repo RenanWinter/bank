@@ -71,7 +71,7 @@ func (q *Queries) GetUserCredentials(ctx context.Context, userID int64) ([]Crede
 		return nil, err
 	}
 	defer rows.Close()
-	var items []Credential
+	items := []Credential{}
 	for rows.Next() {
 		var i Credential
 		if err := rows.Scan(

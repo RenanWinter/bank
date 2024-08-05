@@ -11,6 +11,8 @@ startDB:
 stopDB:
 	docker stop bank
 
+resetDB: dropDB createDB migrateUp
+
 dropDB:
 	docker exec -it bank dropdb -U bank bank
 
@@ -34,4 +36,11 @@ sqlc:
 test:
 	GOFLAGS="-count=1" go test -v -cover ./...
 
-.PHONY: runDB startDB stopDB dropDB createDB migrateUP migrateDown migrateNew sqlc test
+server:
+	go run main.go
+
+## Generate the mock files for the db
+mock:
+	mockgen -destination db/mock/store.go -package mockdb  github.com/RenanWinter/bank/db/sqlc Store
+
+.PHONY: runDB startDB stopDB resetDB dropDB createDB migrateUP migrateDown migrateNew sqlc test server mock

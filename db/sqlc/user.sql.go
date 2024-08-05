@@ -7,6 +7,8 @@ package db
 
 import (
 	"context"
+
+	"github.com/google/uuid"
 )
 
 const createUser = `-- name: CreateUser :one
@@ -84,6 +86,28 @@ func (q *Queries) GetUserById(ctx context.Context, id int64) (User, error) {
 	return i, err
 }
 
+const getUserByUUID = `-- name: GetUserByUUID :one
+SELECT id, uuid, username, email, name, created_at, updated_at, deleted_at 
+FROM users 
+WHERE deleted_at is null and uuid = $1
+`
+
+func (q *Queries) GetUserByUUID(ctx context.Context, argUuid uuid.UUID) (User, error) {
+	row := q.db.QueryRowContext(ctx, getUserByUUID, argUuid)
+	var i User
+	err := row.Scan(
+		&i.ID,
+		&i.Uuid,
+		&i.Username,
+		&i.Email,
+		&i.Name,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+		&i.DeletedAt,
+	)
+	return i, err
+}
+
 const getUserByUsername = `-- name: GetUserByUsername :one
 SELECT id, uuid, username, email, name, created_at, updated_at, deleted_at 
 FROM users 
@@ -126,7 +150,7 @@ func (q *Queries) ListUsers(ctx context.Context, arg ListUsersParams) ([]User, e
 		return nil, err
 	}
 	defer rows.Close()
-	var items []User
+	items := []User{}
 	for rows.Next() {
 		var i User
 		if err := rows.Scan(

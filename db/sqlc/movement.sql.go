@@ -71,7 +71,7 @@ func (q *Queries) GetAccountMovements(ctx context.Context, arg GetAccountMovemen
 		return nil, err
 	}
 	defer rows.Close()
-	var items []Movement
+	items := []Movement{}
 	for rows.Next() {
 		var i Movement
 		if err := rows.Scan(

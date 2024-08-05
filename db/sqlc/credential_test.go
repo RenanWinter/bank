@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
+	"golang.org/x/crypto/bcrypt"
 
 	"github.com/RenanWinter/bank/util/cript"
 	"github.com/RenanWinter/bank/util/random"
@@ -13,8 +14,11 @@ import (
 var _credential Credential
 
 func _createFakeCredential(t *testing.T, user User) Credential {
-	password := cript.HashPassword(random.String(20))
-
+	password, err := cript.HashPassword(random.String(20), bcrypt.DefaultCost)
+	if err != nil {
+		t.Error(err)
+		t.FailNow()
+	}
 	arg := CreateCredentialParams{
 		UserID:   user.ID,
 		Password: password,

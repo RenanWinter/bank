@@ -11,6 +11,11 @@ SELECT *
 FROM users 
 WHERE deleted_at is null and username = $1;
 
+-- name: GetUserByUUID :one
+SELECT * 
+FROM users 
+WHERE deleted_at is null and uuid = $1;
+
 -- name: GetUserById :one
 SELECT *
 FROM users
