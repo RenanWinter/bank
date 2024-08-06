@@ -17,14 +17,13 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Git clone the repository
+      - name: Checkout repo
         uses: actions/checkout@v3
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
-          role-session-name: ${{ secrets.AWS_ROLE_SESSION_NAME }}
+          role-to-assume: arn:aws:iam::025066243622:role/GitHubAction-AssumeRoleWithAction
           aws-region: us-east-2
 
       - name: Login to Amazon ECR
