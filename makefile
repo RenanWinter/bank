@@ -3,7 +3,7 @@ installSQLC:
 	sudo snap install sqlc
 
 runDB:
-	docker run --name bank -p 5432:5432 -e POSTGRES_USER=bank -e POSTGRES_PASSWORD=bank -e POSTGRES_DB=bank -d postgres:16-alpine
+	docker run --name bank_db -p 5432:5432 --network bank-network -e POSTGRES_USER=bank -e POSTGRES_PASSWORD=bank -e POSTGRES_DB=bank -d postgres:16-alpine
 
 startDB:
 	docker start bank
@@ -39,8 +39,14 @@ test:
 server:
 	go run main.go
 
+build:
+	docker build -t bank:latest .
+
+run :
+	docker run --network bank-network -e DB_SOURCE="postgresql://bank:bank@bank_db:5432/bank?sslmode=disable" -p 8080:8080 bank:latest
+
 ## Generate the mock files for the db
 mock:
 	mockgen -destination db/mock/store.go -package mockdb  github.com/RenanWinter/bank/db/sqlc Store
 
-.PHONY: runDB startDB stopDB resetDB dropDB createDB migrateUP migrateDown migrateNew sqlc test server mock
+.PHONY: runDB startDB stopDB resetDB dropDB createDB migrateUP migrateDown migrateNew sqlc test server mock build run

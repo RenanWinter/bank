@@ -1,0 +1,28 @@
+version: '3.9'
+services:
+  bank_db:
+    image: postgres:16-alpine
+    environment:
+      - POSTGRES_PASSWORD=bank
+      - POSTGRES_USER=bank
+      - POSTGRES_DB=bank
+    ports:
+      - 5432:5432
+    healthcheck:
+      test: ["CMD", "pg_isready", "-q", "-d", "bank", "-U", "bank"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  
+  bank_api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 8080:8080
+    depends_on:
+      bank_db:
+        condition: service_healthy
+        restart: true
+    environment:
+      - DB_SOURCE=postgresql://bank:bank@bank_db:5432/bank?sslmode=disable
